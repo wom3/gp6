@@ -1,11 +1,8 @@
 /*
 
-The Game Project-4-Side Scrolling
+The Game Project 6 – Adding game mechanics
 
 */
-
-// the code written within the begin and end comments is written by me without assistance.
-// begin
 
 var gameChar_x;
 var gameChar_y;
@@ -27,6 +24,7 @@ var cameraPosX;
 
 var collectables;
 var canyons;
+var game_score;
 
 function setup() {
   createCanvas(1024, 576);
@@ -114,6 +112,8 @@ function setup() {
       width: 150,
     },
   ];
+
+  game_score = 0;
 }
 
 function draw() {
@@ -123,7 +123,6 @@ function draw() {
   noStroke();
   fill(0, 155, 0);
   rect(0, floorPos_y, width, height - floorPos_y); //draw some green ground
-
   push();
   translate(-cameraPosX, 0);
 
@@ -752,6 +751,8 @@ function draw() {
 
   pop();
 
+  displayScore();
+
   //conditional statements to move the game character
   if (!isPlummeting) {
     if (isLeft) {
@@ -914,11 +915,19 @@ function checkCollectable(t_collectable) {
   if (
     dist(gameChar_x, gameChar_y, t_collectable.x_pos, t_collectable.y_pos) < 50
   ) {
-    t_collectable.isFound = true;
+    if (!t_collectable.isFound == true) {
+      t_collectable.isFound = true;
+      game_score += 1;
+    }
   }
   if (t_collectable.isFound == false) {
     drawCollectable(t_collectable);
   }
 }
 
-// end
+function displayScore() {
+  fill(0);
+  textSize(32);
+  textAlign(RIGHT, TOP);
+  text(`Score: ${game_score}`, 200, 20);
+}
