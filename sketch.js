@@ -26,99 +26,13 @@ var collectables;
 var canyons;
 var game_score;
 var flagpole;
+var lives;
 
 function setup() {
   createCanvas(1024, 576);
   floorPos_y = (height * 3) / 4;
-  gameChar_x = width / 2;
-  gameChar_y = floorPos_y;
-
-  isLeft = false;
-  isRight = false;
-  isFalling = false;
-  isPlummeting = false;
-
-  collectable = {
-    x_pos: 100,
-    y_pos: floorPos_y - 25,
-    size: 50,
-    isFound: false,
-  };
-
-  canyon = {
-    x_pos: 200,
-    width: 100,
-  };
-
-  trees_x = [300, 500, 900, 1150];
-  treePos_y = height / 2;
-
-  clouds = {
-    x_pos: [0, 300, 600],
-    y_pos: [100, 70, 130],
-    size: [90, 110, 80],
-  };
-
-  mountains = {
-    x_pos: [-400, -280, 100, 400],
-    y_pos: 100,
-  };
-
-  cameraPosX = 0;
-
-  collectables = [
-    {
-      x_pos: 100,
-      y_pos: floorPos_y - 25,
-      size: 40,
-      isFound: false,
-    },
-    {
-      x_pos: 200,
-      y_pos: floorPos_y - 25,
-      size: 30,
-      isFound: false,
-    },
-    {
-      x_pos: 300,
-      y_pos: floorPos_y - 25,
-      size: 40,
-      isFound: false,
-    },
-    {
-      x_pos: 400,
-      y_pos: floorPos_y - 25,
-      size: 30,
-      isFound: false,
-    },
-    {
-      x_pos: 600,
-      y_pos: floorPos_y - 25,
-      size: 40,
-      isFound: false,
-    },
-  ];
-
-  canyons = [
-    {
-      x_pos: 200,
-      width: 130,
-    },
-    {
-      x_pos: 400,
-      width: 70,
-    },
-    {
-      x_pos: 600,
-      width: 150,
-    },
-  ];
-
-  game_score = 0;
-  flagpole = {
-    isReached: false,
-    x_pos: 2000,
-  };
+  lives = 3;
+  startGame();
 }
 
 function draw() {
@@ -761,6 +675,24 @@ function draw() {
   pop();
 
   displayScore();
+  checkPlayerDie();
+  drawLives();
+
+  if (lives < 1) {
+    fill(0);
+    textSize(32);
+    textAlign(CENTER, CENTER);
+    text("Game Over. Press space to continue", width / 2, height / 2);
+    return;
+  }
+
+  if (flagpole.isReached) {
+    fill(0);
+    textSize(32);
+    textAlign(CENTER, CENTER);
+    text("Level Complete. Press space to continue", width / 2, height / 2);
+    return;
+  }
 
   //conditional statements to move the game character
   if (!isPlummeting) {
@@ -797,8 +729,12 @@ function keyPressed() {
     isLeft = true;
   } else if ((keyCode == 39 || keyCode == 83) && !isPlummeting) {
     isRight = true;
-  } else if ((keyCode == 32 || keyCode == 87) && !isFalling && !isPlummeting) {
+  } else if ((keyCode == 38 || keyCode == 87) && !isFalling && !isPlummeting) {
     gameChar_y -= 100;
+  }
+  if (keyCode == 32 && (lives < 1 || flagpole.isReached)) {
+    startGame();
+    lives = 3;
   }
 }
 
@@ -969,5 +905,102 @@ function checkFlagpole() {
   var d = abs(gameChar_x - flagpole.x_pos);
   if (d < 15) {
     flagpole.isReached = true;
+  }
+}
+
+function checkPlayerDie() {
+  if (gameChar_y >= height) {
+    lives -= 1;
+    if (lives > 0) {
+      startGame();
+    }
+  }
+}
+
+function startGame() {
+  gameChar_x = width / 2;
+  gameChar_y = floorPos_y;
+
+  isLeft = false;
+  isRight = false;
+  isFalling = false;
+  isPlummeting = false;
+
+  trees_x = [300, 500, 900, 1150];
+  treePos_y = height / 2;
+
+  clouds = {
+    x_pos: [0, 300, 600],
+    y_pos: [100, 70, 130],
+    size: [90, 110, 80],
+  };
+
+  mountains = {
+    x_pos: [-400, -280, 100, 400],
+    y_pos: 100,
+  };
+
+  cameraPosX = 0;
+
+  collectables = [
+    {
+      x_pos: 100,
+      y_pos: floorPos_y - 25,
+      size: 40,
+      isFound: false,
+    },
+    {
+      x_pos: 200,
+      y_pos: floorPos_y - 25,
+      size: 30,
+      isFound: false,
+    },
+    {
+      x_pos: 300,
+      y_pos: floorPos_y - 25,
+      size: 40,
+      isFound: false,
+    },
+    {
+      x_pos: 400,
+      y_pos: floorPos_y - 25,
+      size: 30,
+      isFound: false,
+    },
+    {
+      x_pos: 600,
+      y_pos: floorPos_y - 25,
+      size: 40,
+      isFound: false,
+    },
+  ];
+
+  canyons = [
+    {
+      x_pos: 200,
+      width: 130,
+    },
+    {
+      x_pos: 400,
+      width: 70,
+    },
+    {
+      x_pos: 600,
+      width: 150,
+    },
+  ];
+
+  game_score = 0;
+
+  flagpole = {
+    isReached: false,
+    x_pos: 2000,
+  };
+}
+
+function drawLives() {
+  fill(255, 0, 0);
+  for (let i = 0; i < lives; i++) {
+    ellipse(250 + i * 30, 35, 20, 20);
   }
 }
