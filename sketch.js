@@ -25,6 +25,7 @@ var cameraPosX;
 var collectables;
 var canyons;
 var game_score;
+var flagpole;
 
 function setup() {
   createCanvas(1024, 576);
@@ -114,6 +115,10 @@ function setup() {
   ];
 
   game_score = 0;
+  flagpole = {
+    isReached: false,
+    x_pos: 2000,
+  };
 }
 
 function draw() {
@@ -144,6 +149,10 @@ function draw() {
   for (var i = 0; i < canyons.length; i++) {
     drawCanyon(canyons[i]);
   }
+
+  // render flagpole
+  renderFlagpole();
+  checkFlagpole();
 
   //the game character
   stroke(0);
@@ -930,4 +939,35 @@ function displayScore() {
   textSize(32);
   textAlign(RIGHT, TOP);
   text(`Score: ${game_score}`, 200, 20);
+}
+
+function renderFlagpole() {
+  if (!flagpole.isReached) {
+    push();
+    stroke(0);
+    strokeWeight(5);
+    line(flagpole.x_pos, floorPos_y, flagpole.x_pos, floorPos_y - 250);
+    noStroke();
+    fill(255, 0, 0);
+    rect(flagpole.x_pos, floorPos_y - 50, 50, 50);
+    pop();
+  } else {
+    push();
+    stroke(0);
+    strokeWeight(5);
+    line(flagpole.x_pos, floorPos_y, flagpole.x_pos, floorPos_y - 250);
+    noStroke();
+    fill(255, 0, 0);
+    rect(flagpole.x_pos, floorPos_y - 250, 50, 50);
+    fill(255);
+    ellipse(flagpole.x_pos + 25, floorPos_y - 225, 30);
+    pop();
+  }
+}
+
+function checkFlagpole() {
+  var d = abs(gameChar_x - flagpole.x_pos);
+  if (d < 15) {
+    flagpole.isReached = true;
+  }
 }
