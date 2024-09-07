@@ -32,6 +32,14 @@ var platforms;
 
 var enemies;
 
+var jumpSound;
+
+function preload() {
+  soundFormats("mp3", "wav");
+  jumpSound = loadSound("assets/jump.wav");
+  jumpSound.setVolume(0.1);
+}
+
 function setup() {
   createCanvas(1024, 576);
   floorPos_y = (height * 3) / 4;
@@ -762,13 +770,19 @@ function keyPressed() {
     isLeft = true;
   } else if ((keyCode == 39 || keyCode == 83) && !isPlummeting) {
     isRight = true;
-  } else if ((keyCode == 38 || keyCode == 87) && !isFalling && !isPlummeting) {
+  } else if (
+    (keyCode == 38 || keyCode == 87 || keyCode == 32) &&
+    !isFalling &&
+    !isPlummeting
+  ) {
     gameChar_y -= 100;
+    jumpSound.play();
   }
   if (keyCode == 32 && (lives < 1 || flagpole.isReached)) {
     startGame();
     lives = 3;
   }
+  console.log("keyCode", keyCode);
 }
 
 function keyReleased() {
