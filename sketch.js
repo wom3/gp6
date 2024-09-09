@@ -33,7 +33,7 @@ var platforms;
 var enemies;
 
 var jumpSound;
-var fireworksSoundPlayed = false;
+var fireworksSoundPlayed;
 var fireworksSound;
 var killSound;
 var rewardSound;
@@ -67,48 +67,48 @@ function draw() {
   push();
   translate(-cameraPosX, 0);
 
-  // draw mountains
+  /* draw mountains */
   drawMountains();
 
-  // draw trees
+  /* draw trees */
   drawTrees();
 
-  // draw clouds
+  /* draw clouds */
   drawClouds();
 
-  // draw platforms
+  /* draw platforms */
 
   for (var i = 0; i < platforms.length; i++) {
     platforms[i].draw();
   }
 
-  // check collectable
+  /* check collectable */
   for (var i = 0; i < collectables.length; i++) {
     checkCollectable(collectables[i]);
   }
 
-  //draw the canyon
+  /* draw the canyon */
   for (var i = 0; i < canyons.length; i++) {
     drawCanyon(canyons[i]);
   }
 
-  // render flagpole
+  /* render flagpole */
   renderFlagpole();
   checkFlagpole();
 
-  //the game character
+  /* the game character */
   stroke(0);
   if (isLeft && isFalling) {
-    // add your jumping-left code
-    // face
+    /* add your jumping-left code
+    face */
     fill(222, 184, 135);
     ellipse(gameChar_x, gameChar_y - 65, 20);
 
-    // neck
+    /* neck */
     fill(189, 183, 107);
     rect(gameChar_x - 3, gameChar_y - 56, 5, 5);
 
-    // torso
+    /* torso */
 
     fill(0, 0, 139);
     quad(
@@ -122,11 +122,11 @@ function draw() {
       gameChar_y - 20
     );
 
-    // Legs
+    /* Legs */
 
-    // Left Side
+    /* Left Side */
 
-    // Thigh
+    /* Thigh */
     fill(233, 150, 122);
     quad(
       gameChar_x - 8,
@@ -139,10 +139,10 @@ function draw() {
       gameChar_y - 15
     );
 
-    //Calf
+    /* Calf */
     fill(0, 100, 0);
     rect(gameChar_x - 12, gameChar_y - 15, 3, 4);
-    // Foot
+    /* Foot */
 
     fill(128, 0, 0);
     quad(
@@ -156,9 +156,9 @@ function draw() {
       gameChar_y - 3
     );
 
-    // Right Side
+    /* Right Side */
 
-    // Thigh
+    /* Thigh */
     fill(233, 150, 122);
     quad(
       gameChar_x + 1,
@@ -171,10 +171,10 @@ function draw() {
       gameChar_y - 15
     );
 
-    //Calf
+    /* Calf */
     fill(0, 100, 0);
     rect(gameChar_x - 3, gameChar_y - 15, 3, 4);
-    // Foot
+    /* Foot */
 
     fill(128, 0, 0);
     quad(
@@ -188,16 +188,16 @@ function draw() {
       gameChar_y - 3
     );
   } else if (isRight && isFalling) {
-    // add your jumping-right
-    // face
+    /* add your jumping-right */
+    /* face */
     fill(222, 184, 135);
     ellipse(gameChar_x, gameChar_y - 65, 20);
 
-    // neck
+    /* neck */
     fill(189, 183, 107);
     rect(gameChar_x - 3, gameChar_y - 56, 5, 5);
 
-    // torso
+    /* torso */
 
     fill(0, 0, 139);
     quad(
@@ -211,11 +211,11 @@ function draw() {
       gameChar_y - 20
     );
 
-    // Legs
+    /* Legs */
 
-    // Left Side
+    /* Left Side */
 
-    // Thigh
+    /* Thigh */
     fill(233, 150, 122);
     quad(
       gameChar_x - 8,
@@ -228,10 +228,10 @@ function draw() {
       gameChar_y - 16
     );
 
-    //Calf
+    /* Calf */
     fill(0, 100, 0);
     rect(gameChar_x - 6, gameChar_y - 16, 3, 4);
-    // Foot
+    /* Foot */
 
     fill(128, 0, 0);
     quad(
@@ -245,9 +245,9 @@ function draw() {
       gameChar_y - 4
     );
 
-    // Right Side
+    /* Right Side */
 
-    // Thigh
+    /* Thigh */
     fill(233, 150, 122);
     quad(
       gameChar_x + 4,
@@ -260,11 +260,11 @@ function draw() {
       gameChar_y - 16
     );
 
-    //Calf
+    /* Calf */
     fill(0, 100, 0);
     rect(gameChar_x + 6, gameChar_y - 16, 3, 4);
 
-    // Foot
+    /* Foot */
     fill(128, 0, 0);
     quad(
       gameChar_x + 6,
@@ -277,16 +277,16 @@ function draw() {
       gameChar_y - 4
     );
   } else if (isLeft) {
-    // add your walking left code
-    // face
+    /* add your walking left code */
+    /* face */
     fill(222, 184, 135);
     ellipse(gameChar_x, gameChar_y - 65, 20);
 
-    // neck
+    /* neck */
     fill(189, 183, 107);
     rect(gameChar_x - 3, gameChar_y - 56, 5, 5);
 
-    // torso
+    /* torso */
 
     fill(0, 0, 139);
     quad(
@@ -300,11 +300,11 @@ function draw() {
       gameChar_y - 20
     );
 
-    // Legs
+    /* Legs */
 
-    // Left Side
+    /* Left Side */
 
-    // Thigh
+    /* Thigh */
     fill(233, 150, 122);
     quad(
       gameChar_x - 8,
@@ -317,10 +317,10 @@ function draw() {
       gameChar_y - 15
     );
 
-    //Calf
+    /* Calf */
     fill(0, 100, 0);
     rect(gameChar_x - 12, gameChar_y - 15, 3, 5);
-    // Foot
+    /* Foot */
 
     fill(128, 0, 0);
     quad(
@@ -334,9 +334,9 @@ function draw() {
       gameChar_y - 2
     );
 
-    // Right Side
+    /* Right Side */
 
-    // Thigh
+    /* Thigh */
     fill(233, 150, 122);
     quad(
       gameChar_x + 3,
@@ -349,7 +349,7 @@ function draw() {
       gameChar_y - 14
     );
 
-    //Calf
+    /* Calf */
     fill(0, 100, 0);
     quad(
       gameChar_x + 3,
@@ -362,7 +362,7 @@ function draw() {
       gameChar_y - 8
     );
 
-    // Foot
+    /* Foot */
 
     fill(128, 0, 0);
     quad(
@@ -376,16 +376,16 @@ function draw() {
       gameChar_y
     );
   } else if (isRight) {
-    // add your walking right code
-    // face
+    /* add your walking right code */
+    /* face */
     fill(222, 184, 135);
     ellipse(gameChar_x, gameChar_y - 65, 20);
 
-    // neck
+    /* neck */
     fill(189, 183, 107);
     rect(gameChar_x - 3, gameChar_y - 56, 5, 5);
 
-    // torso
+    /* torso */
 
     fill(0, 0, 139);
     quad(
@@ -399,11 +399,11 @@ function draw() {
       gameChar_y - 20
     );
 
-    // Legs
+    /* Legs */
 
-    // Left Side
+    /* Left Side */
 
-    // Thigh
+    /* Thigh */
     fill(233, 150, 122);
     quad(
       gameChar_x - 8,
@@ -416,7 +416,7 @@ function draw() {
       gameChar_y - 14
     );
 
-    //Calf
+    /* Calf */
     fill(0, 100, 0);
     quad(
       gameChar_x - 8,
@@ -429,7 +429,7 @@ function draw() {
       gameChar_y - 8
     );
 
-    // Foot
+    /* Foot */
 
     fill(128, 0, 0);
     quad(
@@ -443,9 +443,9 @@ function draw() {
       gameChar_y
     );
 
-    // Right Side
+    /* Right Side */
 
-    // Thigh
+    /* Thigh */
     fill(233, 150, 122);
     quad(
       gameChar_x + 3,
@@ -458,7 +458,7 @@ function draw() {
       gameChar_y - 13
     );
 
-    //Calf
+    /* Calf */
     fill(0, 100, 0);
     quad(
       gameChar_x + 5,
@@ -471,7 +471,7 @@ function draw() {
       gameChar_y - 8
     );
 
-    // Foot
+    /* Foot */
 
     fill(128, 0, 0);
     quad(
@@ -485,15 +485,15 @@ function draw() {
       gameChar_y - 1
     );
   } else if (isFalling || isPlummeting) {
-    // add your jumping facing forwards code
+    /* add your jumping facing forwards code */
     fill(222, 184, 135);
     ellipse(gameChar_x, gameChar_y - 65, 20);
 
-    // neck
+    /* neck */
     fill(189, 183, 107);
     rect(gameChar_x - 3, gameChar_y - 56, 5, 5);
 
-    // torso
+    /* torso */
 
     fill(0, 0, 139);
     quad(
@@ -507,11 +507,11 @@ function draw() {
       gameChar_y - 20
     );
 
-    // Legs
+    /* Legs */
 
-    // Left Side
+    /* Left Side */
 
-    // Thigh
+    /* Thigh */
     fill(233, 150, 122);
     quad(
       gameChar_x - 8,
@@ -524,7 +524,7 @@ function draw() {
       gameChar_y - 19
     );
 
-    // Calf
+    /* Calf */
     fill(0, 100, 0);
     quad(
       gameChar_x - 8,
@@ -537,7 +537,7 @@ function draw() {
       gameChar_y - 13
     );
 
-    // Foot
+    /* Foot */
     fill(128, 0, 0);
     quad(
       gameChar_x - 9,
@@ -550,9 +550,9 @@ function draw() {
       gameChar_y - 5
     );
 
-    // Right Side
+    /* Right Side */
 
-    // Thigh
+    /* Thigh */
     fill(233, 150, 122);
     quad(
       gameChar_x + 3,
@@ -565,7 +565,7 @@ function draw() {
       gameChar_y - 19
     );
 
-    // Calf
+    /* Calf */
     fill(0, 100, 0);
     quad(
       gameChar_x + 3,
@@ -578,7 +578,7 @@ function draw() {
       gameChar_y - 13
     );
 
-    // Foot
+    /* Foot */
     fill(128, 0, 0);
     quad(
       gameChar_x + 4,
@@ -591,16 +591,16 @@ function draw() {
       gameChar_y - 5
     );
   } else {
-    // add your standing front facing code
-    // face
+    /* add your standing front facing code */
+    /* face */
     fill(222, 184, 135);
     ellipse(gameChar_x, gameChar_y - 65, 20);
 
-    // neck
+    /* neck */
     fill(189, 183, 107);
     rect(gameChar_x - 3, gameChar_y - 56, 5, 5);
 
-    // torso
+    /* torso */
 
     fill(0, 0, 139);
     quad(
@@ -614,11 +614,11 @@ function draw() {
       gameChar_y - 20
     );
 
-    // Legs
+    /* Legs */
 
-    // Left Side
+    /* Left Side */
 
-    // Thigh
+    /* Thigh */
     fill(233, 150, 122);
     quad(
       gameChar_x - 8,
@@ -631,7 +631,7 @@ function draw() {
       gameChar_y - 14
     );
 
-    //Calf
+    /* Calf */
     fill(0, 100, 0);
     quad(
       gameChar_x - 8,
@@ -644,7 +644,7 @@ function draw() {
       gameChar_y - 8
     );
 
-    // Foot
+    /* Foot */
 
     fill(128, 0, 0);
     quad(
@@ -657,9 +657,9 @@ function draw() {
       gameChar_x - 11,
       gameChar_y
     );
-    // Right Side
+    /* Right Side */
 
-    // Thigh
+    /* Thigh */
     fill(233, 150, 122);
     quad(
       gameChar_x + 3,
@@ -672,7 +672,7 @@ function draw() {
       gameChar_y - 14
     );
 
-    //Calf
+    /* Calf */
     fill(0, 100, 0);
     quad(
       gameChar_x + 3,
@@ -685,7 +685,7 @@ function draw() {
       gameChar_y - 8
     );
 
-    // Foot
+    /* Foot */
 
     fill(128, 0, 0);
     quad(
@@ -742,7 +742,7 @@ function draw() {
     return;
   }
 
-  //conditional statements to move the game character
+  /* conditional statements to move the game character */
   if (!isPlummeting) {
     if (isLeft) {
       gameChar_x -= 5;
@@ -770,12 +770,12 @@ function draw() {
     isFalling = false;
   }
 
-  // Falling down the canyon
+  /* Falling down the canyon */
   for (var i = 0; i < canyons.length; i++) {
     checkCanyon(canyons[i]);
   }
 
-  // Make character fall when plummeting
+  /* Make character fall when plummeting */
   if (isPlummeting) {
     gameChar_y += 5;
     killSound.play();
@@ -784,8 +784,8 @@ function draw() {
 }
 
 function keyPressed() {
-  // if statements to control the animation of the character when
-  // keys are pressed.
+  /* if statements to control the animation of the character when */
+  /* keys are pressed. */
   if ((keyCode == 37 || keyCode == 65) && !isPlummeting) {
     isLeft = true;
   } else if ((keyCode == 39 || keyCode == 83) && !isPlummeting) {
@@ -807,8 +807,8 @@ function keyPressed() {
 }
 
 function keyReleased() {
-  // if statements to control the animation of the character when
-  // keys are released.
+  /* if statements to control the animation of the character when
+  keys are released. */
 
   if (keyCode == 37 || keyCode == 65) {
     isLeft = false;
@@ -915,8 +915,8 @@ function checkCanyon(t_canyon) {
 }
 
 function drawCollectable(t_collectable) {
-  // Draw the main body of the coin
-  fill(255, 215, 0); // Gold color
+  /* Draw the main body of the coin */
+  fill(255, 215, 0);
   ellipse(
     t_collectable.x_pos + 20,
     t_collectable.y_pos,
@@ -924,8 +924,8 @@ function drawCollectable(t_collectable) {
     t_collectable.size
   );
 
-  // Add a border to the coin
-  // Darker gold color for the border
+  /* Add a border to the coin */
+  /* Darker gold color for the border */
   stroke(184, 134, 11);
   strokeWeight(2);
   ellipse(
@@ -935,9 +935,9 @@ function drawCollectable(t_collectable) {
     t_collectable.size
   );
 
-  // Add some shading to give it a 3D effect
+  /* Add some shading to give it a 3D effect */
   noStroke();
-  // Lighter gold color for the shading
+  /* Lighter gold color for the shading */
   fill(255, 223, 0);
   ellipse(
     t_collectable.x_pos + 20,
@@ -946,8 +946,8 @@ function drawCollectable(t_collectable) {
     t_collectable.size * 0.9
   );
 
-  // Add a highlight to the top left
-  // Semi-transparent white for the highlight
+  /* Add a highlight to the top left */
+  /* Semi-transparent white for the highlight */
   fill(255, 255, 255, 150);
   ellipse(
     t_collectable.x_pos + 20 - t_collectable.size * 0.2,
@@ -956,7 +956,7 @@ function drawCollectable(t_collectable) {
     t_collectable.size * 0.3
   );
 
-  // Determine the denomination based on the size
+  /* Determine the denomination based on the size */
   let denomination;
   if (t_collectable.size === 30) {
     denomination = 1;
@@ -966,14 +966,15 @@ function drawCollectable(t_collectable) {
     denomination = 3;
   }
 
-  // Add the denomination text to the coin
-  // Black color for the text
+  /* Add the denomination text to the coin */
+  /* Black color for the text */
   fill(0);
   textSize(t_collectable.size * 0.5);
   textFont(tFont);
   textAlign(CENTER, CENTER);
   text(denomination, t_collectable.x_pos + 20, t_collectable.y_pos);
 }
+
 function checkCollectable(t_collectable) {
   if (
     dist(gameChar_x, gameChar_y, t_collectable.x_pos, t_collectable.y_pos) < 50
@@ -1319,7 +1320,7 @@ function Emitter(x, y, xSpeed, ySpeed, size) {
   this.xSpeed = xSpeed;
   this.ySpeed = ySpeed;
   this.size = size;
-  // 12 different colors
+
   this.colors = [
     "#FF4500",
     "#FFD700",
