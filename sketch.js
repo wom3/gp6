@@ -794,7 +794,8 @@ function keyPressed() {
     (keyCode == 38 || keyCode == 87 || keyCode == 32) &&
     !isFalling &&
     !isPlummeting &&
-    (lives > 0 || !flagpole.isReached)
+    lives > 0 &&
+    !flagpole.isReached
   ) {
     gameChar_y -= 100;
     jumpSound.play();
