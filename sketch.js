@@ -33,6 +33,10 @@ var platforms;
 var enemies;
 
 var jumpSound;
+var fireworksSoundPlayed = false;
+var fireworksSound;
+
+var emit;
 
 function preload() {
   soundFormats("mp3", "wav");
@@ -41,6 +45,8 @@ function preload() {
   rewardSound = loadSound("assets/rewards.wav");
   levelSound = loadSound("assets/level.wav");
   applauseSound = loadSound("assets/applause.wav");
+  fireworkSound = loadSound("assets/firework.wav");
+  fireworksSound = loadSound("assets/fireworks.wav");
   jumpSound.setVolume(0.1);
 }
 
@@ -49,12 +55,12 @@ function setup() {
   floorPos_y = (height * 3) / 4;
   lives = 3;
   startGame();
+  console.log("enemies", enemies);
 }
 
 function draw() {
   cameraPosX = gameChar_x - width / 2;
   background(100, 155, 255); //fill the sky blue
-
   noStroke();
   fill(0, 155, 0);
   rect(0, floorPos_y, width, height - floorPos_y); //draw some green ground
@@ -722,7 +728,20 @@ function draw() {
   }
 
   if (flagpole.isReached) {
-    // applauseSound.play();
+    if (!fireworksSoundPlayed) {
+      fireworksSound.play();
+      fireworksSoundPlayed = true;
+    }
+    // fireworksSound.play();
+    // if (fireworkSound.isLoaded()) {
+    //   fireworkSound.play();
+    //   setTimeout(() => {
+    //     fireworkSound.stop();
+    //   }, 1000);
+    // }
+    // background(10);
+    emit.updateParticles();
+    console.log("emit", emit);
     fill(0);
     textSize(32);
     textAlign(CENTER, CENTER);
@@ -768,6 +787,7 @@ function draw() {
     gameChar_y += 5;
     killSound.play();
   }
+  fireworksSoundPlayed = false;
 }
 
 function keyPressed() {
@@ -996,6 +1016,21 @@ function startGame() {
 
   cameraPosX = 0;
 
+  enemies = [];
+  enemies.push(new Enemy(100, floorPos_y - 10, 100));
+  enemies.push(new Enemy(340, floorPos_y - 310, 100));
+  enemies.push(new Enemy(440, floorPos_y - 310, 100));
+  enemies.push(new Enemy(640, floorPos_y - 310, 150));
+
+  platforms = [];
+  platforms.push(createPlatforms(0, floorPos_y - 100, 100));
+  platforms.push(createPlatforms(70, floorPos_y - 200, 100));
+  platforms.push(createPlatforms(140, floorPos_y - 300, 100));
+  platforms.push(createPlatforms(340, floorPos_y - 300, 200));
+  platforms.push(createPlatforms(640, floorPos_y - 300, 150));
+  platforms.push(createPlatforms(790, floorPos_y - 200, 100));
+  platforms.push(createPlatforms(890, floorPos_y - 100, 100));
+
   collectables = [
     {
       x_pos: 100,
@@ -1027,6 +1062,48 @@ function startGame() {
       size: 40,
       isFound: false,
     },
+    {
+      x_pos: enemies[1].x + 100,
+      y_pos: enemies[1].y - 5,
+      size: 30,
+      isFound: false,
+    },
+    {
+      x_pos: enemies[3].x + 100,
+      y_pos: enemies[3].y - 5,
+      size: 30,
+      isFound: false,
+    },
+    {
+      x_pos: enemies[3].x + 150,
+      y_pos: enemies[3].y - 5,
+      size: 30,
+      isFound: false,
+    },
+    {
+      x_pos: enemies[3].x + 200,
+      y_pos: enemies[3].y - 50,
+      size: 30,
+      isFound: false,
+    },
+    {
+      x_pos: platforms[0].x + 50,
+      y_pos: platforms[0].y - 25,
+      size: 30,
+      isFound: false,
+    },
+    {
+      x_pos: platforms[1].x + 50,
+      y_pos: platforms[1].y - 25,
+      size: 30,
+      isFound: false,
+    },
+    {
+      x_pos: platforms[2].x + 50,
+      y_pos: platforms[2].y - 25,
+      size: 30,
+      isFound: false,
+    },
   ];
 
   canyons = [
@@ -1039,20 +1116,10 @@ function startGame() {
       width: 70,
     },
     {
-      x_pos: 600,
-      width: 150,
+      x_pos: 550,
+      width: 250,
     },
   ];
-
-  platforms = [];
-
-  platforms.push(createPlatforms(0, floorPos_y - 100, 100));
-  platforms.push(createPlatforms(70, floorPos_y - 200, 100));
-  platforms.push(createPlatforms(140, floorPos_y - 300, 100));
-  platforms.push(createPlatforms(340, floorPos_y - 300, 150));
-  platforms.push(createPlatforms(590, floorPos_y - 300, 150));
-  platforms.push(createPlatforms(790, floorPos_y - 200, 100));
-  platforms.push(createPlatforms(890, floorPos_y - 100, 100));
 
   game_score = 0;
 
@@ -1061,8 +1128,17 @@ function startGame() {
     x_pos: 2000,
   };
 
-  enemies = [];
-  enemies.push(new Enemy(100, floorPos_y - 10, 100));
+  emit = new Emitter(
+    gameChar_x,
+    floorPos_y - 250,
+    0,
+    -1,
+    10,
+    color(200, 0, 200)
+  );
+  emit.startEmitter(200, 100);
+
+  fireworkSound.setLoop(false);
 }
 
 function drawLives() {
@@ -1126,5 +1202,96 @@ function Enemy(x, y, range) {
       return true;
     }
     return false;
+  };
+}
+
+function Particle(x, y, xSpeed, ySpeed, size, color, age) {
+  this.x = x;
+  this.y = y;
+  this.xSpeed = xSpeed;
+  this.ySpeed = ySpeed;
+  this.size = size;
+  this.color = color;
+  this.age = 0;
+
+  this.drawParticle = function () {
+    fill(color);
+    ellipse(this.x, this.y, this.size);
+  };
+
+  this.updateParticle = function () {
+    this.x += this.xSpeed;
+    this.y += this.ySpeed;
+    age++;
+  };
+}
+
+function Emitter(x, y, xSpeed, ySpeed, size) {
+  this.x = x;
+  this.y = y;
+  this.xSpeed = xSpeed;
+  this.ySpeed = ySpeed;
+  this.size = size;
+  // Define an array of 12 different colors
+  this.colors = [
+    "#FF4500",
+    "#FFD700",
+    "#FF69B4",
+    "#00FF00",
+    "#00FFFF",
+    "#1E90FF",
+    "#FF1493",
+    "#FF6347",
+    "#ADFF2F",
+    "#FF00FF",
+    "#FFFF00",
+    "#00BFFF",
+  ];
+
+  this.startParticles = 0;
+  this.lifetime = 0;
+
+  this.particles = [];
+
+  this.startEmitter = function (startParticles, lifetime) {
+    this.startParticles = startParticles;
+    this.lifetime = lifetime;
+    for (let i = 0; i < startParticles; i++) {
+      this.particles.push(
+        new Particle(
+          random(this.x - 10, this.x + 10),
+          random(this.y - 10, this.y + 10),
+          random(this.xSpeed - 1, this.xSpeed + 1),
+          random(this.ySpeed - 1, this.xSpeed + 1),
+          random(this.size - 2, this.size + 2),
+          this.colors[i % this.colors.length]
+        )
+      );
+    }
+  };
+  this.updateParticles = function () {
+    var deadParticles = 0;
+    for (let i = this.particles.length - 1; i >= 0; i--) {
+      this.particles[i].drawParticle();
+      this.particles[i].updateParticle();
+      if (this.particles[i].age > random(0, this.lifetime)) {
+        this.particles.splice(i, 1);
+        deadParticles++;
+      }
+    }
+    if (deadParticles > 0) {
+      for (let i = 0; i < deadParticles; i++) {
+        this.particles.push(
+          new Particle(
+            random(this.x - 10, this.x + 10),
+            random(this.y - 10, this.y + 10),
+            random(this.xSpeed - 1, this.xSpeed + 1),
+            random(this.ySpeed - 1, this.xSpeed + 1),
+            random(this.size - 2, this.size + 2),
+            this.colors[i % this.colors.length]
+          )
+        );
+      }
+    }
   };
 }
