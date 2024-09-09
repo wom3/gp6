@@ -37,6 +37,10 @@ var jumpSound;
 function preload() {
   soundFormats("mp3", "wav");
   jumpSound = loadSound("assets/jump.wav");
+  killSound = loadSound("assets/kill-sound.wav");
+  rewardSound = loadSound("assets/rewards.wav");
+  levelSound = loadSound("assets/level.wav");
+  applauseSound = loadSound("assets/applause.wav");
   jumpSound.setVolume(0.1);
 }
 
@@ -698,6 +702,7 @@ function draw() {
     if (isContact) {
       startGame();
       lives -= 1;
+      killSound.play();
       break;
     }
   }
@@ -717,6 +722,7 @@ function draw() {
   }
 
   if (flagpole.isReached) {
+    // applauseSound.play();
     fill(0);
     textSize(32);
     textAlign(CENTER, CENTER);
@@ -760,6 +766,7 @@ function draw() {
   // Make character fall when plummeting
   if (isPlummeting) {
     gameChar_y += 5;
+    killSound.play();
   }
 }
 
@@ -1042,10 +1049,10 @@ function startGame() {
   platforms.push(createPlatforms(0, floorPos_y - 100, 100));
   platforms.push(createPlatforms(70, floorPos_y - 200, 100));
   platforms.push(createPlatforms(140, floorPos_y - 300, 100));
-  platforms.push(createPlatforms(340, floorPos_y - 300, 100));
-  platforms.push(createPlatforms(540, floorPos_y - 300, 100));
-  // platforms.push(createPlatforms(100, floorPos_y - 200, 100));
-  // platforms.push(createPlatforms(600, floorPos_y - 100, 200));
+  platforms.push(createPlatforms(340, floorPos_y - 300, 150));
+  platforms.push(createPlatforms(590, floorPos_y - 300, 150));
+  platforms.push(createPlatforms(790, floorPos_y - 200, 100));
+  platforms.push(createPlatforms(890, floorPos_y - 100, 100));
 
   game_score = 0;
 
