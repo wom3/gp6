@@ -1,6 +1,6 @@
 /*
 
-The Game Project 6 – Adding game mechanics
+The Final Game Project
 
 */
 
@@ -35,6 +35,9 @@ var enemies;
 var jumpSound;
 var fireworksSoundPlayed = false;
 var fireworksSound;
+var killSound;
+var rewardSound;
+var tFont;
 
 var emit;
 
@@ -43,11 +46,9 @@ function preload() {
   jumpSound = loadSound("assets/jump.wav");
   killSound = loadSound("assets/kill-sound.wav");
   rewardSound = loadSound("assets/rewards.wav");
-  levelSound = loadSound("assets/level.wav");
-  applauseSound = loadSound("assets/applause.wav");
-  fireworkSound = loadSound("assets/firework.wav");
   fireworksSound = loadSound("assets/fireworks.wav");
   jumpSound.setVolume(0.1);
+  tFont = loadFont("assets/coinfont.otf");
 }
 
 function setup() {
@@ -55,15 +56,14 @@ function setup() {
   floorPos_y = (height * 3) / 4;
   lives = 3;
   startGame();
-  console.log("enemies", enemies);
 }
 
 function draw() {
   cameraPosX = gameChar_x - width / 2;
-  background(100, 155, 255); //fill the sky blue
+  background(100, 155, 255);
   noStroke();
   fill(0, 155, 0);
-  rect(0, floorPos_y, width, height - floorPos_y); //draw some green ground
+  rect(0, floorPos_y, width, height - floorPos_y);
   push();
   translate(-cameraPosX, 0);
 
@@ -723,6 +723,7 @@ function draw() {
     fill(0);
     textSize(32);
     textAlign(CENTER, CENTER);
+    textFont(tFont);
     text("Game Over. Press space to continue", width / 2, height / 2);
     return;
   }
@@ -732,19 +733,11 @@ function draw() {
       fireworksSound.play();
       fireworksSoundPlayed = true;
     }
-    // fireworksSound.play();
-    // if (fireworkSound.isLoaded()) {
-    //   fireworkSound.play();
-    //   setTimeout(() => {
-    //     fireworkSound.stop();
-    //   }, 1000);
-    // }
-    // background(10);
     emit.updateParticles();
-    console.log("emit", emit);
     fill(0);
     textSize(32);
     textAlign(CENTER, CENTER);
+    textFont(tFont);
     text("Level Complete. Press space to continue", width / 2, height / 2);
     return;
   }
@@ -764,7 +757,7 @@ function draw() {
     for (var i = 0; i < platforms.length; i++) {
       if (platforms[i].checkContact(gameChar_x, gameChar_y)) {
         isContact = true;
-        gameChar_y = platforms[i].y; // Ensure character stays on the platform
+        gameChar_y = platforms[i].y;
         isFalling = false;
         break;
       }
@@ -800,7 +793,8 @@ function keyPressed() {
   } else if (
     (keyCode == 38 || keyCode == 87 || keyCode == 32) &&
     !isFalling &&
-    !isPlummeting
+    !isPlummeting &&
+    (lives > 0 || !flagpole.isReached)
   ) {
     gameChar_y -= 100;
     jumpSound.play();
@@ -809,7 +803,6 @@ function keyPressed() {
     startGame();
     lives = 3;
   }
-  console.log("keyCode", keyCode);
 }
 
 function keyReleased() {
@@ -921,22 +914,79 @@ function checkCanyon(t_canyon) {
 }
 
 function drawCollectable(t_collectable) {
-  fill(255, 215, 0);
+  // Draw the main body of the coin
+  fill(255, 215, 0); // Gold color
   ellipse(
     t_collectable.x_pos + 20,
     t_collectable.y_pos,
     t_collectable.size,
     t_collectable.size
   );
-}
 
+  // Add a border to the coin
+  // Darker gold color for the border
+  stroke(184, 134, 11);
+  strokeWeight(2);
+  ellipse(
+    t_collectable.x_pos + 20,
+    t_collectable.y_pos,
+    t_collectable.size,
+    t_collectable.size
+  );
+
+  // Add some shading to give it a 3D effect
+  noStroke();
+  // Lighter gold color for the shading
+  fill(255, 223, 0);
+  ellipse(
+    t_collectable.x_pos + 20,
+    t_collectable.y_pos - t_collectable.size * 0.1,
+    t_collectable.size * 0.9,
+    t_collectable.size * 0.9
+  );
+
+  // Add a highlight to the top left
+  // Semi-transparent white for the highlight
+  fill(255, 255, 255, 150);
+  ellipse(
+    t_collectable.x_pos + 20 - t_collectable.size * 0.2,
+    t_collectable.y_pos - t_collectable.size * 0.2,
+    t_collectable.size * 0.3,
+    t_collectable.size * 0.3
+  );
+
+  // Determine the denomination based on the size
+  let denomination;
+  if (t_collectable.size === 30) {
+    denomination = 1;
+  } else if (t_collectable.size === 40) {
+    denomination = 2;
+  } else if (t_collectable.size === 50) {
+    denomination = 3;
+  }
+
+  // Add the denomination text to the coin
+  // Black color for the text
+  fill(0);
+  textSize(t_collectable.size * 0.5);
+  textFont(tFont);
+  textAlign(CENTER, CENTER);
+  text(denomination, t_collectable.x_pos + 20, t_collectable.y_pos);
+}
 function checkCollectable(t_collectable) {
   if (
     dist(gameChar_x, gameChar_y, t_collectable.x_pos, t_collectable.y_pos) < 50
   ) {
     if (!t_collectable.isFound == true) {
       t_collectable.isFound = true;
-      game_score += 1;
+      rewardSound.play();
+      if (t_collectable.size == 40) {
+        game_score += 2;
+      } else if (t_collectable.size == 50) {
+        game_score += 3;
+      } else {
+        game_score += 1;
+      }
     }
   }
   if (t_collectable.isFound == false) {
@@ -948,7 +998,8 @@ function displayScore() {
   fill(0);
   textSize(32);
   textAlign(RIGHT, TOP);
-  text(`Score: ${game_score}`, 200, 20);
+  textFont(tFont);
+  text(`Score: ${game_score}`, 200, 15);
 }
 
 function renderFlagpole() {
@@ -1016,20 +1067,31 @@ function startGame() {
 
   cameraPosX = 0;
 
-  enemies = [];
-  enemies.push(new Enemy(100, floorPos_y - 10, 100));
-  enemies.push(new Enemy(340, floorPos_y - 310, 100));
-  enemies.push(new Enemy(440, floorPos_y - 310, 100));
-  enemies.push(new Enemy(640, floorPos_y - 310, 150));
-
   platforms = [];
   platforms.push(createPlatforms(0, floorPos_y - 100, 100));
   platforms.push(createPlatforms(70, floorPos_y - 200, 100));
   platforms.push(createPlatforms(140, floorPos_y - 300, 100));
   platforms.push(createPlatforms(340, floorPos_y - 300, 200));
   platforms.push(createPlatforms(640, floorPos_y - 300, 150));
-  platforms.push(createPlatforms(790, floorPos_y - 200, 100));
+  platforms.push(createPlatforms(740, floorPos_y - 200, 100));
   platforms.push(createPlatforms(890, floorPos_y - 100, 100));
+  platforms.push(createPlatforms(540, floorPos_y - 200, 150));
+
+  enemies = [];
+  enemies.push(new Enemy(100, floorPos_y - 10, 100));
+  enemies.push(new Enemy(340, floorPos_y - 310, 100));
+  enemies.push(new Enemy(440, floorPos_y - 310, 100));
+  enemies.push(new Enemy(640, floorPos_y - 310, 150));
+  enemies.push(new Enemy(platforms[0].x, platforms[0].y - 10, 100));
+  enemies.push(new Enemy(platforms[1].x, platforms[1].y - 10, 100));
+  enemies.push(new Enemy(platforms[2].x, platforms[2].y - 10, 100));
+  enemies.push(new Enemy(platforms[5].x, platforms[5].y - 10, 100));
+  enemies.push(new Enemy(platforms[6].x, platforms[6].y - 10, 100));
+  enemies.push(new Enemy(platforms[7].x, platforms[7].y - 10, 100));
+  enemies.push(new Enemy(1000, floorPos_y, 100));
+  enemies.push(new Enemy(1200, floorPos_y, 100));
+  enemies.push(new Enemy(1400, floorPos_y, 100));
+  enemies.push(new Enemy(1600, floorPos_y, 100));
 
   collectables = [
     {
@@ -1104,6 +1166,30 @@ function startGame() {
       size: 30,
       isFound: false,
     },
+    {
+      x_pos: platforms[7].x + 50,
+      y_pos: platforms[7].y - 25,
+      size: 50,
+      isFound: false,
+    },
+    {
+      x_pos: platforms[4].x + 100,
+      y_pos: platforms[4].y - 75,
+      size: 50,
+      isFound: false,
+    },
+    {
+      x_pos: platforms[4].x + 150,
+      y_pos: platforms[4].y - 125,
+      size: 50,
+      isFound: false,
+    },
+    {
+      x_pos: platforms[4].x + 230,
+      y_pos: platforms[4].y - 75,
+      size: 50,
+      isFound: false,
+    },
   ];
 
   canyons = [
@@ -1138,7 +1224,7 @@ function startGame() {
   );
   emit.startEmitter(200, 100);
 
-  fireworkSound.setLoop(false);
+  fireworksSound.setLoop(false);
 }
 
 function drawLives() {
@@ -1232,7 +1318,7 @@ function Emitter(x, y, xSpeed, ySpeed, size) {
   this.xSpeed = xSpeed;
   this.ySpeed = ySpeed;
   this.size = size;
-  // Define an array of 12 different colors
+  // 12 different colors
   this.colors = [
     "#FF4500",
     "#FFD700",
